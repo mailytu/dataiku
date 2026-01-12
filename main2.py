@@ -9,4 +9,8 @@ df = pd.read_excel(file_path)
 # Afficher les premières lignes
 print(df.head())
 
+<<<<<<< HEAD
 print('Hello Main - Dataiku x Maï-Ly Test')
+=======
+print('You are in the feature/conflict-demo branch')
+>>>>>>> feature/conflict-demo
