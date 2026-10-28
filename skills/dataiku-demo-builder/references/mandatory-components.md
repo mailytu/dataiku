@@ -64,6 +64,6 @@ For the agentic angle, the much longer list in `angles/agentic.md` applies.
 **Check**: knowledge bank built and searchable (search it with the plugin tool), prompt recipe built, output sampled and coherent. This knowledge bank can also feed the agents' knowledge bank search tool, so reuse it.
 
 ## Always-on conventions (not components, but checked every time)
-- Flow organised in named zones; objects described.
+- Flow organised in named zones; objects described. The Default zone is renamed "Sources" and holds the data generation Python recipe and its input datasets (no empty Default zone).
 - Wiki article with the story, a click-by-click demo script, and the questions to ask each agent.
 - Language as requested (English by default).

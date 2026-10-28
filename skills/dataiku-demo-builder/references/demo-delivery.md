@@ -7,7 +7,7 @@ Datasets always carry metadata. Never leave a dataset, recipe, zone, model, agen
 - **Datasets**: a short business description (one sentence: what it is, where it comes from, who uses it), tags (for example `raw`, `prepared`, `scored`, `synthetic`), and a description on every column (meaning, unit, allowed values). Use the dataset column-description tools to set and check them.
 - **Recipes, zones, model, agent, tools, skill, webapp**: a short business-readable description.
 - **Project**: description, tags, a short project summary and a project owner.
-- **Flow readability**: explicit business names, no crossing links where it can be avoided, zones ordered left to right in reading order (Data Prep → Machine Learning → Scoring → Agent / App), no orphan or leftover objects.
+- **Flow readability**: explicit business names, no crossing links where it can be avoided, zones ordered left to right in reading order (Sources → Data Prep → Machine Learning → Scoring → Agent / App), no orphan or leftover objects. Sources is the Default zone renamed, holding the data generation recipe and the input datasets; there is never an empty Default zone next to a separate sources zone.
 - Check at the end: list the datasets and confirm none has an empty description or empty column descriptions.
 
 ## 2. Demo script (talk track)
