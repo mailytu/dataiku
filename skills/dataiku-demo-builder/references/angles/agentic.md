@@ -13,6 +13,15 @@ On top of the mandatory components (which already include the visual agent, the 
 
 These items add objects, so the agentic flow may grow to about 30 objects; keep each extra object justified and grouped in the agent, fine-tuning and evaluation zones.
 
+### How to build them (learned on DSS 15)
+- **What tools can do it**: Cobuild cannot create Prompt recipes, RAG LLMs, LLM evaluation recipes or configure Agent Hub. Use dku-cli: `dku rag create`, `dku recipe create-prompt`, `dku evaluation-store create --flavor LLM`, `dku recipe create-llm-eval`, `dku agent create --type STRUCTURED_AGENT` + `dku agent-block set-graph`, `dku webapp create --from-plugin traces-explorer --component traces-explorer`. Use Cobuild for zones, descriptions and the wiki.
+- **Manual steps (UI only, list them in the final message with the click path)**: creating the Prompt Studio itself and its variants (no public API), and enrolling agents in Agent Hub (the hub config is browser-session only). Build the Prompt recipe by CLI with the same prompt so the flow works, then recreate it in Prompt Studio for the live demo.
+- **Prompt recipe output storage**: `create-prompt` auto-creates its output on an arbitrary connection. Immediately fix the dataset definition (`type`, `params.connection`, `params.schema`, `params.table` like `${projectKey}_NAME`) to match the project's main connection, or the build fails.
+- **Traces for Trace Explorer**: set the Prompt-on-agent recipe's `payload.rawResponseOutputMode` to `RAW` (an invalid value such as `RAW_WITH_TRACES` makes the job fail with a NullPointerException).
+- **LLM evaluation recipe**: set its code env to the LLM evaluation env and `containerSelection` to `NONE` (the default env tries to run in a container). For a JSON classification task, `QUESTION_ANSWERING` with `answerCorrectness,answerSimilarity` against the expected completion works without a context column.
+- **Fine-tuning**: start it first, since remote fine-tuning can wait in the provider queue for hours; meanwhile build the structured agent with the base model, then switch the qualification block's `llmId` to the fine-tuned model and rerun the comparison once it is deployed.
+- **Delegation**: expose the structured agent to the visual agent through an `LLMMeshLLMQuery` tool on `agent:<structured_agent_id>`, and say in the visual agent's instructions when to delegate.
+
 Docs are the source of truth for exact settings and current behaviour. Fetch the relevant page when you build that piece rather than trusting memory, because agent features evolve quickly. Prefer the headless plugin tools; fall back to dataiku-cli, the Python API client or Cobuild.
 
 ## Capability checklist
