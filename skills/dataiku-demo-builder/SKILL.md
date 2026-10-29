@@ -36,10 +36,13 @@ These apply to every demo, whatever the sector or angle.
 
 **A demo, not an MVP**: the goal is to illustrate the use case and the logic of the flow clearly, never to build a complete or industrialised solution. Datasets, transformations, models, prompts and agents stay simple, readable and easy to explain out loud in one sentence each. Prefer the simple option every time (few columns that matter, a handful of Prepare steps, a default ML setup, short prompts, one clear tool per job). No edge-case handling, no heavy logic, no optimisation, no production concerns.
 
+**Easy to pick up and to present**: the use case must let the audience project themselves into their own reality, but its translation into a Dataiku project stays simple to grasp and to demo. Someone opening the project for the first time understands the flow in a minute, and a presenter can walk through it without preparing for hours. When realism and ease of demo conflict, simplify the Dataiku side and keep the business vocabulary to carry the realism.
+
 **Flow**: realistic enough to recognise a field reality, small enough to understand at a glance. Keep it as small as possible while the use case stays coherent: the fewest components that tell the story, roughly 15–22 objects organised in named flow zones (for example Sources → Data Prep → Machine Learning → Scoring → GenAI / Agent → App). The first zone, Sources, is always the project's Default zone renamed "Sources": it holds the data generation Python recipe and the input datasets it writes. Never create a separate zone for the sources and never leave the Default zone empty. Every object must have a business reason; if it grows past ~25 objects (~35 for the agentic angle, whose 15 mandatory capabilities add objects), simplify. Give every dataset, recipe and zone a business-readable name and a short description; zones in reading order, no needless crossing links. Delivery rules are in `references/demo-delivery.md`.
 
 **Data** (details in `references/data-generation.md`):
 - All datasets come from one Python script that generates coherent synthetic data. The script runs as a Python recipe at the start of the flow and writes the datasets to the databases.
+- At most 10 columns per dataset (a hard ceiling, not a target), and only the columns the demo actually uses. No useless columns in the input datasets, none added "for realism".
 - At most 4 datasets, 5 only if truly necessary. Exactly one lives in Postgres (or Databricks as fallback); all others live in Snowflake. If neither Postgres nor Databricks is available, that dataset is generated in Snowflake too, and this is reported.
 - The data always contains deliberate quality problems, so the data quality checks have something real to catch.
 - Every dataset always has metadata: a business description, tags, and a description on every column.
@@ -65,7 +68,7 @@ These apply to every demo, whatever the sector or angle.
 
 Keep a task list and update it as you go. Start building straight away once the use case is clear.
 
-1. **Plan (short).** Decide: the business question, 4–5 datasets with their columns, which quality problems to inject, flow zones, the ML target, the agent's job and tools, and the webapp's main screens. Write this into the project wiki as the "Demo guide" skeleton later; do not wait for approval unless the use case itself is ambiguous.
+1. **Plan (short).** Decide: the business question, up to 4 datasets with their columns (10 at most each, and for each column what in the demo uses it), which quality problems to inject, flow zones, the ML target, the agent's job and tools, and the webapp's main screens. Write this into the project wiki as the "Demo guide" skeleton later; do not wait for approval unless the use case itself is ambiguous.
 2. **Check the instance.** Confirm the current instance, list connections, and pick Snowflake plus Postgres (fallback Databricks, tested with `test_connection`; if neither works, everything goes to Snowflake). Check that the LLM connection needed for the agent exists. If something required is missing, say exactly what and continue with the rest.
 3. **Create the project** in a sensible project folder, with the container execution default set to the backend (see Execution), with a readable project key, a description, and tags. Use project variables for anything that should be easy to change (for example the accent colour or a connection name).
 4. **Generate the data.** Start from `scripts/generate_data_template.py`, adapt entities and quality issues to the use case, run it locally once to sanity-check, then put it in the Python recipe so it writes to the target connections. Keep that recipe and its output datasets in the Default zone (zone id `default`) and rename that zone "Sources" with a short description; do not move them to another zone. Verify row counts and that the injected issues are really present.
@@ -84,6 +87,7 @@ If a capability needed for a step is not exposed by the plugin tools (for exampl
 Do not report success until each item is true, or is explicitly listed as not done with the reason.
 
 - [ ] Project opens, flow readable, zones named and ordered, the Default zone renamed "Sources" and holding the data generation recipe and input datasets (no empty Default zone, no other sources zone), objects described, every dataset has a description, tags and column descriptions
+- [ ] Every dataset has 10 columns or fewer, each one used in the demo (no useless input columns)
 - [ ] ≤ 4 datasets (5 if justified), 1 in Postgres/Databricks (Snowflake if neither is available, reported), the rest in Snowflake
 - [ ] Data quality rules flag the injected problems; prepared data passes
 - [ ] Visual Prepare + another visual recipe present; flow kept small (every object justified)

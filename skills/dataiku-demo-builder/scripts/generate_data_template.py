@@ -142,7 +142,8 @@ def build_events(rng, entities, manifest):
 #          rank them low). Everything not listed in either place is a mistake.
 DRIVERS = {"age_days": 0.8, "n_events": 0.9, "total_downtime": 0.7}
 NO_EFFECT = ["country", "segment", "annual_value"]
-NOISE = 0.8          # keeps the model credible (AUC about 0.75 to 0.90), not perfect
+MAX_COLUMNS = 10     # hard ceiling per dataset; fewer is better
+NOISE = 0.8         # keeps the model credible (AUC about 0.75 to 0.90), not perfect
 
 
 def zscore(x):
@@ -193,6 +194,8 @@ def main():
     for name, df in tables.items():
         df.to_csv(os.path.join(args.out, f"{name}.csv"), index=False)
         print(f"{name}: {len(df)} rows, {df.shape[1]} columns")
+        # Hard ceiling: 10 columns per dataset, and only columns the demo uses
+        assert df.shape[1] <= MAX_COLUMNS, f"{name} has {df.shape[1]} columns (max {MAX_COLUMNS}): drop the unused ones"
     with open(os.path.join(args.out, "dq_manifest.json"), "w") as f:
         json.dump(manifest, f, indent=2)
     print("Injected data quality issues:")
