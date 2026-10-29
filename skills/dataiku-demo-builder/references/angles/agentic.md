@@ -1,17 +1,24 @@
 # Angle: agentic
 
-Use when the user wants the demo to put agents at the centre. The five mandatory components still apply; this file raises the bar on the agent side so the demo showcases the breadth of Dataiku's agentic capabilities in a way that serves the use case. Pick the capabilities that make the story better; do not add one only to tick a box, but every item below must either be present or explicitly justified as skipped in the final message.
+Use when the user wants the demo to put agents at the centre. The mandatory components still apply; this file raises the bar on the agent side so the demo showcases the full breadth of Dataiku's agentic capabilities in a way that serves the use case.
 
-## Mandatory for every agentic demo
-On top of the mandatory components (which already include the visual agent, the structured agent and the Prompt Studio prompt with RAG), an agentic demo always contains the six items below. They are not optional and cannot be skipped for story reasons; only a missing licence or add-on on the instance excuses one, and that must be reported. Each one must be wired into the flow and the story, never left as an orphan object:
-1. **Prompt Studio** (item 11): the prompt is developed and compared in Prompt Studio, then deployed as a Prompt recipe that feeds something downstream (a dataset the agent, the webapp or the evaluation reads).
-2. **Agent evaluation store with several tests** (item 9): a test dataset of 8–12 realistic cases (normal questions, out-of-scope question, ambiguous question, one that needs the documents, one that needs the ML score) with reference answers, the agent run on it, an Evaluate Agent recipe writing to an evaluation store, and at least two evaluation runs so the store shows a trend.
-3. **GenAI comparison** (item 13): the same test cases evaluated with at least two variants (two LLMs, two agent versions, or base vs fine-tuned model), compared side by side in the evaluation store comparison view.
-4. **Trace Explorer** (item 14): agent responses stored with their full traces, and the Trace Explorer opened on them so the presenter can show tool calls, skill loads and blocks step by step.
-5. **Agent Hub** (item 15): the agents (visual and structured) published in an Agent Hub webapp so business users can chat with them; the agent descriptions and starter questions are filled in.
-6. **Fine-tuned LLM** (item 12): a small fine-tuning on a supervised dataset built in the flow (for example incident report → classification), trained, and then **used**: the fine-tuned model powers one step of the story (an LLM Request block of the structured agent, or the Prompt recipe) and is one of the variants of the GenAI comparison.
+## All 15 capabilities are mandatory
+Every item of the capability checklist below is present in every agentic demo, items 1 to 15 alike. None can be skipped for story or size reasons; only a missing licence or add-on on the instance excuses one (for example Agent Review without the Advanced LLM Mesh add-on), and that must be reported with the reason. A capability that exists but plays no role in the story does not count: each one is wired into the flow and the talk track, never left as an orphan object. The work is to find, for each capability, the place where it naturally serves the use case.
 
-These items add objects, so the agentic flow may grow to about 30 objects; keep each extra object justified and grouped in the agent, fine-tuning and evaluation zones.
+## Weave them into one story
+Design the agentic part around one persona and one governed process before building anything, then give every capability its job in that story. Use this spine and adapt the vocabulary to the use case:
+
+- **Knowledge layer.** The RAG documents (item 10) are embedded into one knowledge bank shared by the Prompt recipe and the agents. The semantic model (item 7) sits on the project's main prepared and scored tables so the agents answer analytical questions ("how many high-risk assets per site this month?") correctly.
+- **Text at scale.** The Prompt recipe developed in Prompt Studio (item 11) classifies or summarises the text records of the use case (incident reports, claims, tickets). Its output feeds a dataset the agents or the webapp read. The fine-tuned LLM (item 12) is trained on the same task, from a supervised dataset built in the flow out of those records.
+- **Exploration assistant.** The simple visual agent (item 1) is the copilot the persona talks to. Its visual tools (item 4) cover the real needs: a dataset or SQL lookup, a Knowledge Bank Search on the documents, a Model Prediction tool on the ML model, a Dataset Append tool that logs an action, and a Query Another Agent tool that delegates to the structured agent. Its visual skills (item 6, two or three) are business procedures it loads on demand.
+- **Governed process.** The structured visual agent (item 2) runs the procedure with rules (triage, approval, escalation): intake, an LLM Request block powered by the fine-tuned model, a mandatory tool call that can never be skipped, routing on the result, and a skill or reflection step for the final answer.
+- **Custom logic.** The code tool (item 5) holds the domain calculation or business rule a visual tool cannot express (a risk score formula, an SLA or cost calculation, an eligibility rule), and the agents call it. The code agent (item 3) stays small and has a clear reason to exist: for example a specialist sub-agent called by the structured agent through a Delegate block, or a deterministic orchestration step. Keep both short and explain in the wiki why code was the right choice there.
+- **Trust and governance.** One shared test set of 8–12 cases feeds the agent evaluation store (item 9, at least two runs) and the GenAI comparison (item 13: base LLM vs fine-tuned model, or agent v1 vs v2). Agent Review (item 8) reuses a few of these cases plus one multi-turn conversation. The agent runs keep their full traces for the Trace Explorer (item 14).
+- **Adoption.** Both visual agents are published in Agent Hub (item 15), next to the custom webapp, which still offers a way to talk to the agent or act on its output.
+
+The wiki demo script walks through this spine in order, so every capability shows up as a step of the story, not as a feature tour.
+
+These items add objects, so the agentic flow may grow to about 35 objects. Keep each extra object justified and grouped in named zones (for example Sources → Data Prep → Machine Learning → Knowledge → Agents → Fine-tuning → Evaluation → App).
 
 ### How to build them (learned on DSS 15)
 - **What tools can do it**: Cobuild cannot create Prompt recipes, RAG LLMs, LLM evaluation recipes or configure Agent Hub. Use dku-cli: `dku rag create`, `dku recipe create-prompt`, `dku evaluation-store create --flavor LLM`, `dku recipe create-llm-eval`, `dku agent create --type STRUCTURED_AGENT` + `dku agent-block set-graph`, `dku webapp create --from-plugin traces-explorer --component traces-explorer`. Use Cobuild for zones, descriptions and the wiki.
@@ -30,7 +37,7 @@ Docs are the source of truth for exact settings and current behaviour. Fetch the
 An LLM-driven ReAct agent: it chooses tools and skills autonomously from instructions. Use it for the open-ended assistant the persona talks to (a maintenance copilot, an account assistant).
 Docs: https://knowledge.dataiku.com/latest/genai/agents/concept-simple-visual-agents.html
 
-### 2. Structured visual agent (include when the process has rules)
+### 2. Structured visual agent (always)
 A sequence of blocks with deterministic logic around the LLM: intake and intent classification, routing, parallel lookups, loops, approvals. Use it where the business has a defined procedure that must be followed (triage, escalation, refund or work-order approval). A strong demo has both: a simple agent for exploration, a structured agent for the governed process, ideally with the structured one delegating or being called from the other.
 Blocks to consider, and when each earns its place:
 - Agentic Loop: LLM with tools inside a step; collect required fields over several turns
@@ -49,36 +56,36 @@ Block reference index: https://doc.dataiku.com/dss/latest/agents/structured-visu
 Expressions: https://doc.dataiku.com/dss/latest/agents/structured-visual-agents/expressions.html
 Disambiguation how-to: https://doc.dataiku.com/dss/latest/agents/structured-visual-agents/how-to/conversational-disambiguation.html
 
-### 3. Code agent (include only if there is a reason)
-A Python agent for logic the visual editor cannot express. In a visual-first demo it should be small and justified (for example one custom orchestration step). Skip it otherwise and say so.
+### 3. Code agent (always, small and justified)
+A Python agent for logic the visual editor cannot express. In a visual-first demo it stays small and has a clear reason to exist (for example a specialist sub-agent called through a Delegate block, or one custom orchestration step). Explain that reason in the wiki.
 Docs: https://doc.dataiku.com/dss/latest/agents/code-agents.html
 
-### 4. Visual tools (the core; pick the ones that fit the use case)
+### 4. Visual tools (always; the core, chosen for the use case)
 Categories: query data (Dataset Lookup, SQL query, Knowledge Bank Search), perform actions (Dataset Append, Model Prediction, Send Message), orchestration (Query Another Agent or LLM), integration (Jira, Salesforce, Google search, MCP). Choose the tools a real user of this use case would need: for a maintenance copilot, a lookup on equipment and interventions, a model prediction tool on the failure model, an append tool to log a work order. Attach each with a clear name and description, since the LLM chooses tools from them.
 Docs: https://doc.dataiku.com/dss/latest/agents/tools/index.html and https://knowledge.dataiku.com/latest/genai/agents/concept-agent-tool-overview.html
 
-### 5. Code tool (include one if the use case has a calculation or rule that a visual tool cannot express)
-A small custom Python tool kept inside the project (for example a domain formula). Keep it short and readable.
+### 5. Code tool (always, at least one)
+A small custom Python tool kept inside the project for the calculation or rule a visual tool cannot express (for example a domain formula). Find that calculation in the use case; keep it short and readable.
 Docs: https://knowledge.dataiku.com/latest/genai/agents/concept-agent-tool-overview.html
 
 ### 6. Visual skill (always, at least one; often two or three)
 Skills are reusable instructions the agent loads only when relevant, which keeps context focused and cheap. Each has a name, description, optional metadata, instructions and optional assets (templates, sub-tasks). Write skills as business procedures (for example "how to assess a risky asset and propose next actions", "how to write an account brief"), and let the structured agent or simple agent load them.
 Docs: https://knowledge.dataiku.com/latest/genai/agents/concept-agent-skills.html
 
-### 7. Semantic model (include when the agent answers analytical questions over tables)
-Gives the agent business meaning for tables, columns, measures and relationships so that it queries data correctly. Build it on the project's main tables with business-friendly names, descriptions and a few key measures.
+### 7. Semantic model (always)
+The agents always get analytical questions to answer, so the semantic model always has a job. It gives the agent business meaning for tables, columns, measures and relationships so that it queries data correctly. Build it on the project's main tables with business-friendly names, descriptions and a few key measures.
 Docs: https://knowledge.dataiku.com/latest/genai/agents/semantic-models-lab/tutorial-index.html
 
-### 8. Agent review (include; it is a strong governance story)
-Define a handful of realistic test cases (single-turn with reference answers, and one multi-turn with a simulated user), set traits, run a review and show the pass/fail view. It requires the Advanced LLM Mesh add-on; if it is not available, say so and skip.
+### 8. Agent review (always)
+Define a handful of realistic test cases (single-turn with reference answers, and one multi-turn with a simulated user), set traits, run a review and show the pass/fail view. It requires the Advanced LLM Mesh add-on; if the add-on is missing, report it and skip this item only.
 Docs: https://doc.dataiku.com/dss/latest/agents/agent-review.html and https://knowledge.dataiku.com/latest/genai/agents/semantic-models-lab/tutorial-index.html
 
 ### 9. Agent evaluation store (always, with several tests)
 Build a test dataset of 8–12 realistic cases with reference answers, run the agent on it (Prompt recipe on the agent), evaluate with the Evaluate Agent recipe into an evaluation store, and run it at least twice so the store shows a history. Choose metrics the audience understands (answer correctness, faithfulness, tool usage).
 Docs: https://doc.dataiku.com/dss/latest/agents/evaluation.html and https://knowledge.dataiku.com/latest/deploy/genai-monitoring/tutorial-agent-evaluation.html
 
-### 10. RAG (include when the use case has documents)
-The Prompt recipe with RAG is already a mandatory component (see `mandatory-components.md`, component 8); reuse its knowledge bank and extend it here for the agents. Documents such as procedures, manuals, incident reports or policies embedded into a knowledge bank, then searched by a Knowledge Bank Search tool. This is natural whenever the use case has procedures, policies or reports (maintenance procedures, warranty policies, quality manuals). The documents are synthetic text generated by the data script or a small companion script. This adds a managed folder and an Embed recipe; keep the total flow size in check.
+### 10. RAG (always)
+The Prompt recipe with RAG is already a mandatory component (see `mandatory-components.md`, component 8); reuse its knowledge bank and extend it here for the agents. Documents such as procedures, manuals, incident reports or policies embedded into a knowledge bank, then searched by a Knowledge Bank Search tool. Every use case has procedures, policies or reports to draw on (maintenance procedures, warranty policies, quality manuals). The documents are the synthetic files generated with `scripts/generate_documents_template.py`. This adds a managed folder and an Embed recipe; keep the total flow size in check.
 Docs: https://knowledge.dataiku.com/latest/genai/rag/concept-rag.html
 
 ### 11. Prompt Studio (always)
@@ -99,20 +106,24 @@ Keep the full traces of agent runs (the agent responses dataset with the raw res
 Publish the visual agent and the structured agent in an Agent Hub webapp with a business description and three starter questions each. It complements the custom webapp; it does not replace it.
 
 ## Fit with the flow-size rule
-Agentic demos tend to grow. Keep the flow readable by putting agent-related objects in their own flow zone, reusing the same few datasets as tools and knowledge, and cutting any capability that does not serve the story. Four datasets and one Postgres/Databricks table still hold.
+Agentic demos grow to about 35 objects. Keep the flow readable by grouping agent, knowledge, fine-tuning and evaluation objects in their own zones and reusing the same few datasets as tools, knowledge and test data. Cut detail inside a capability rather than a capability. Four datasets and one Postgres/Databricks table still hold.
 
 ## Agentic acceptance checklist
-- [ ] Simple visual agent working with 2+ tools and 1+ skill
-- [ ] Structured visual agent (or a justified reason it is skipped) with routing and a mandatory step
-- [ ] Tools chosen for the use case, with names and descriptions the LLM can use
-- [ ] At least one skill loaded on demand and visible in a test trace
-- [ ] Semantic model, RAG, code tool, code agent: each present or justified as skipped
-- [ ] Agent review with test cases and a run (or noted unavailable)
-- [ ] Prompt Studio prompt with at least two variants compared, deployed as a Prompt recipe with RAG whose output is used downstream
-- [ ] Agent evaluation store with 8–12 test cases and at least two evaluation runs
-- [ ] GenAI comparison of at least two variants (including the fine-tuned model) open in the evaluation store
-- [ ] Trace Explorer opened on stored agent traces
-- [ ] Visual and structured agents published in Agent Hub with descriptions and starter questions
-- [ ] Fine-tuned LLM trained and used by the structured agent or the Prompt recipe
+Every line is required. Only a missing licence or add-on excuses one, reported with the reason.
+- [ ] 1. Simple visual agent working with its tools and skills, tested on realistic questions
+- [ ] 2. Structured visual agent with routing, a mandatory tool call and an LLM Request block, running the governed process
+- [ ] 3. Code agent, small, with its role in the story explained in the wiki
+- [ ] 4. Visual tools chosen for the use case (lookup, Knowledge Bank Search, Model Prediction, Dataset Append, delegation), with names and descriptions the LLM can use
+- [ ] 5. Code tool for a domain calculation or rule, called by an agent
+- [ ] 6. Two or three visual skills, at least one loaded on demand and visible in a trace
+- [ ] 7. Semantic model on the main tables, used by an agent to answer an analytical question
+- [ ] 8. Agent Review with single-turn cases, one multi-turn case, traits and a run (or the missing add-on reported)
+- [ ] 9. Agent evaluation store with 8–12 test cases and at least two evaluation runs
+- [ ] 10. RAG knowledge bank shared by the Prompt recipe and a Knowledge Bank Search tool
+- [ ] 11. Prompt Studio prompt with at least two variants compared, deployed as a Prompt recipe with RAG whose output is used downstream
+- [ ] 12. Fine-tuned LLM trained and used by the structured agent or the Prompt recipe
+- [ ] 13. GenAI comparison of at least two variants (including the fine-tuned model) open in the evaluation store
+- [ ] 14. Trace Explorer opened on stored agent traces; the most telling test case named in the wiki
+- [ ] 15. Visual and structured agents published in Agent Hub with descriptions and three starter questions each
 - [ ] Webapp offers a way to talk to the agent or to act on its output
-- [ ] Wiki demo script walks through: ask, tool call, skill load, governed process, trace, evaluation and comparison, review
+- [ ] Wiki demo script follows the story spine: ask, tool call, skill load, analytical question, governed process, custom logic, trace, evaluation and comparison, review, Agent Hub

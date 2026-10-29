@@ -21,7 +21,7 @@ Extract these from the prompt. Anything missing gets the default, and the choice
 | Parameter | Default | Notes |
 |---|---|---|
 | Use case / sector | none (required) | If absent, ask one short question. |
-| Feature angle | overview | `overview` needs no extra file. `agentic` → read `references/angles/agentic.md`; its six agentic items (Prompt Studio, agent evaluation store with several tests, GenAI comparison, Trace Explorer, Agent Hub, fine-tuned LLM) are mandatory. |
+| Feature angle | overview | `overview` needs no extra file. `agentic` → read `references/angles/agentic.md`; all 15 capabilities of its checklist are mandatory, woven into one coherent story. |
 | Language | English | Everything visible in the demo (names, descriptions, wiki, prompts, webapp, data values) follows it. French only if the user asks. |
 | Webapp accent colour | deep teal-green | The whole palette is derived from it (see webapp reference). |
 | Operational database | Postgres | If no working Postgres connection, test Databricks. If neither works, generate that dataset in Snowflake like the others. Say which one was used. |
@@ -36,7 +36,7 @@ These apply to every demo, whatever the sector or angle.
 
 **A demo, not an MVP**: the goal is to illustrate the use case and the logic of the flow clearly, never to build a complete or industrialised solution. Datasets, transformations, models, prompts and agents stay simple, readable and easy to explain out loud in one sentence each. Prefer the simple option every time (few columns that matter, a handful of Prepare steps, a default ML setup, short prompts, one clear tool per job). No edge-case handling, no heavy logic, no optimisation, no production concerns.
 
-**Flow**: realistic enough to recognise a field reality, small enough to understand at a glance. Keep it as small as possible while the use case stays coherent: the fewest components that tell the story, roughly 15–22 objects organised in named flow zones (for example Sources → Data Prep → Machine Learning → Scoring → GenAI / Agent → App). The first zone, Sources, is always the project's Default zone renamed "Sources": it holds the data generation Python recipe and the input datasets it writes. Never create a separate zone for the sources and never leave the Default zone empty. Every object must have a business reason; if it grows past ~25 objects (~30 for the agentic angle, whose mandatory items add objects), simplify. Give every dataset, recipe and zone a business-readable name and a short description; zones in reading order, no needless crossing links. Delivery rules are in `references/demo-delivery.md`.
+**Flow**: realistic enough to recognise a field reality, small enough to understand at a glance. Keep it as small as possible while the use case stays coherent: the fewest components that tell the story, roughly 15–22 objects organised in named flow zones (for example Sources → Data Prep → Machine Learning → Scoring → GenAI / Agent → App). The first zone, Sources, is always the project's Default zone renamed "Sources": it holds the data generation Python recipe and the input datasets it writes. Never create a separate zone for the sources and never leave the Default zone empty. Every object must have a business reason; if it grows past ~25 objects (~35 for the agentic angle, whose 15 mandatory capabilities add objects), simplify. Give every dataset, recipe and zone a business-readable name and a short description; zones in reading order, no needless crossing links. Delivery rules are in `references/demo-delivery.md`.
 
 **Data** (details in `references/data-generation.md`):
 - All datasets come from one Python script that generates coherent synthetic data. The script runs as a Python recipe at the start of the flow and writes the datasets to the databases.
@@ -99,7 +99,7 @@ Do not report success until each item is true, or is explicitly listed as not do
 - [ ] Wiki demo guide written: 5–7 min talk track with wow moments, agent test questions, build report
 - [ ] Simple enough to explain: every dataset, recipe and prompt can be described in one sentence
 - [ ] Ready to present: everything built, webapp visually checked, ML metric credible (about 0.75–0.90)
-- [ ] Angle-specific checklist done (for agentic: Prompt Studio, agent evaluation store with several tests, GenAI comparison, Trace Explorer, Agent Hub and fine-tuned LLM all present and wired into the flow)
+- [ ] Angle-specific checklist done (for agentic: all 15 capabilities present and wired into the story; only a missing licence or add-on excuses one, reported)
 
 ## Final message
 
