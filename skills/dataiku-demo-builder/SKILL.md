@@ -42,7 +42,7 @@ These apply to every demo, whatever the sector or angle.
 
 **Data** (details in `references/data-generation.md`):
 - All datasets come from one Python script that generates coherent synthetic data. The script runs as a Python recipe at the start of the flow and writes the datasets to the databases.
-- At most 10 columns per dataset (a hard ceiling, not a target), and only the columns the demo actually uses. No useless columns in the input datasets, none added "for realism".
+- At most 10 columns per input dataset (a hard ceiling, not a target), and only the columns the demo actually uses. No useless columns in the input datasets, none added "for realism". Intermediate datasets aim for 10 columns or fewer too, but may have more when truly necessary.
 - At most 4 datasets, 5 only if truly necessary. Exactly one lives in Postgres (or Databricks as fallback); all others live in Snowflake. If neither Postgres nor Databricks is available, that dataset is generated in Snowflake too, and this is reported.
 - The data always contains deliberate quality problems, so the data quality checks have something real to catch.
 - Every dataset always has metadata: a business description, tags, and a description on every column.
@@ -87,7 +87,7 @@ If a capability needed for a step is not exposed by the plugin tools (for exampl
 Do not report success until each item is true, or is explicitly listed as not done with the reason.
 
 - [ ] Project opens, flow readable, zones named and ordered, the Default zone renamed "Sources" and holding the data generation recipe and input datasets (no empty Default zone, no other sources zone), objects described, every dataset has a description, tags and column descriptions
-- [ ] Every dataset has 10 columns or fewer, each one used in the demo (no useless input columns)
+- [ ] Every input dataset has 10 columns or fewer, each one used in the demo (no useless input columns); intermediate datasets go above 10 only when necessary
 - [ ] ≤ 4 datasets (5 if justified), 1 in Postgres/Databricks (Snowflake if neither is available, reported), the rest in Snowflake
 - [ ] Data quality rules flag the injected problems; prepared data passes
 - [ ] Visual Prepare + another visual recipe present; flow kept small (every object justified)
